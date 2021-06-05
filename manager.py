@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from redis import StrictRedis
+from flask_wtf.csrf import CSRFProtect
 
 
 # 0.自定义项目配置类
@@ -27,8 +28,12 @@ app.config.from_object(Config)
 
 # 2.创建数据库对象
 db = SQLAlchemy(app)
+
 # 3.创建redis对象
 redis_store = StrictRedis(host=Config.REDIS_HOST, port=Config.REDIS_PORT)
+
+# 4.给项目添加csrf防护机制
+CSRFProtect(app)
 
 
 @app.route('/')
