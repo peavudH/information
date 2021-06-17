@@ -3,6 +3,8 @@ from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from redis import StrictRedis
 from flask_wtf.csrf import CSRFProtect
+from flask_script import Manager
+from flask_migrate import Migrate, MigrateCommand
 
 
 # 0.自定义项目配置类
@@ -36,7 +38,6 @@ class Config(object):
     PERMANENT_SESSION_LIFETIME = 86400
 
 
-
 # 1.创建app对象
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -56,6 +57,15 @@ CSRFProtect(app)
 # 5.将session存储的数据从`内存`转移到`redis`中存储的
 Session(app)
 
+# 6.创建管理类
+manager = Manager(app)
+
+# 7.创建数据库迁移对象
+Migrate(app, db)
+
+# 8.添加迁移指令
+manager.add_command("db", MigrateCommand)
+
 
 @app.route('/')
 def hello_world():
@@ -63,4 +73,6 @@ def hello_world():
 
 
 if __name__ == '__main__':
-    app.run()
+    # app.run()
+    # 9.使用管理对象运行flask项目
+    manager.run()
